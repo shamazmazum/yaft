@@ -60,5 +60,5 @@
                              :element-type '(complex double-float)
                              :initial-contents (loop repeat 8191 collect (complex (random 1d0))))
      for array2 = (yaft:fft (yaft:fft array yaft:+forward+) yaft:+inverse+)
-     do (is-true (every (sera:hook2 #'approx-= (alex:rcurry #'/ (length array)))
+     do (is-true (every (sera:hook2 #'approx-= (alex:rcurry #'/ 1))
                         array array2))))
