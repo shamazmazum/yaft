@@ -1,5 +1,5 @@
 (defpackage yaft
-  (:use #:cl #:snakes)
+  (:use #:cl)
   (:local-nicknames (:alex :alexandria)
                     (:sera :serapeum))
   (:export #:fft

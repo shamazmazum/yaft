@@ -14,8 +14,7 @@
                  (:file "rfft"))
     :depends-on (:alexandria
                  :serapeum
-                 :array-operations
-                 :snakes)
+                 :array-operations)
     :in-order-to ((test-op (load-op "yaft/tests")))
     :perform (test-op (op system)
                       (declare (ignore op system))

@@ -12,19 +12,6 @@
 
 (in-suite yaft)
 
-(test factor
-  (flet ((test% (n factors)
-           (let ((primes
-                  (generator->list
-                   (takewhile
-                    (alex:rcurry #'<= (car factors))
-                    (yaft::primes)))))
-             (and (= n (reduce #'* factors))
-                  (every (alex:rcurry #'find primes) factors)))))
-    (is-true
-     (every (sera:hook #'test% #'yaft::factor)
-            (take 1000 (icount 2))))))
-
 (test fft-vs-naïve
   (loop repeat 10
      for array = (make-array 200
