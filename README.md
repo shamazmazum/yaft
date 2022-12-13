@@ -1,4 +1,5 @@
 # yaft 
+[![CI tests](https://github.com/shamazmazum/yaft/actions/workflows/test.yml/badge.svg)](https://github.com/shamazmazum/yaft/actions/workflows/test.yml)
 
 ## Yet another common lisp Fourier transform library
 
@@ -15,6 +16,7 @@ implementations. Here is a comparison with some other popular libraries:
 | No side-effects²           |    ✓          |     ✗     |     ✗        |
 | Fast                       |  Not really³  |     ✓     |     ✓        |
 | Prime number of elements   |    ✓          |     ✗     |     ✗        |
+| Multidimensional arrays    |    ✗          |     ✗     |     ✗        |
 
 Some additional explanation:
 
