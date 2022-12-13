@@ -29,7 +29,4 @@
     :serial t
     :components ((:file "package")
                  (:file "tests"))
-    :depends-on (:yaft
-                 :alexandria
-                 :serapeum
-                 :fiveam))
+    :depends-on (:yaft :fiveam))
