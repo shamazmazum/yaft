@@ -44,10 +44,10 @@
   (declare (type (complex-array double-float) array))
   ;; Generic IFFT formula
   (let ((fft (bluestein-fft
-              (aops:vectorize* '(complex double-float) (array)
-                (conjugate array)))))
-    (aops:vectorize* '(complex double-float) (fft)
-      (conjugate fft))))
+              (map '(vector (complex double-float))
+                   #'conjugate array))))
+    (map '(vector (complex double-float))
+         #'conjugate fft)))
 
 (sera:-> prime-fft
          ((complex-array double-float)

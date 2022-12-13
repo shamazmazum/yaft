@@ -14,9 +14,9 @@
 
 (test fft-vs-naïve
   (loop repeat 10
-     for array = (make-array 200
+     for array = (make-array 380
                              :element-type '(complex double-float)
-                             :initial-contents (loop repeat 200 collect
+                             :initial-contents (loop repeat 380 collect
                                                     (complex (random 1d0)
                                                              (random 1d0))))
      for fft-fast = (yaft:fft array yaft:+forward+)

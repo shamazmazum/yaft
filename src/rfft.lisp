@@ -9,7 +9,8 @@
   "Compute FFT of real-values input array of type (SIMPLE-ARRAY
 DOUBLE-FLOAT (*)). Currently only arrays of even length are
 supported."
-  (declare (type (real-array double-float) array))
+  (declare (type (real-array double-float) array)
+           (optimize (speed 3)))
 
   (when (oddp (length array))
     (error 'yaft-error
@@ -23,18 +24,15 @@ supported."
       (complex (aref array (+ 0 (* 2 k)))
                (aref array (+ 1 (* 2 k)))))
     (let ((fft (fft complex-input +forward+)))
-      (loop
-         for k below (1+ half)
-         for mul = (* #c(0d0 1d0)
+      (aops:each-index! result k
+        (let ((mul (* #c(0d0 1d0)
                       (if (< k half) 1 -1)
                       (exp (* #c(0d0 -1d0)
                               (rem k half)
-                              (/ pi half))))
-         do
-           (setf (aref result k)
-                 (/ (+ (* (- 1 mul) (aref fft (rem k half)))
-                       (* (+ 1 mul) (conjugate (aref fft (rem (- half k) half)))))
-                    2))))
+                              (/ pi half))))))
+          (/ (+ (* (- 1 mul) (aref fft (rem k half)))
+                (* (+ 1 mul) (conjugate (aref fft (rem (- half k) half)))))
+             2))))
     result))
 
 (sera:-> irfft
