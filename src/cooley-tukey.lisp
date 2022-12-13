@@ -72,7 +72,8 @@ multiplied by (LENGTH ARRAY)."
                    ((> phases 17)
                     (prime-fft array direction))
                    (t
-                    (let ((sub-ffts (mapcar (alex:rcurry #'fft% (cdr factors))
+                    (let ((sub-ffts (mapcar (lambda (phase)
+                                              (fft% phase (cdr factors)))
                                             (phase-split array phases)))
                           (result (make-array length :element-type '(complex double-float))))
                       (aops:each-index! result k
