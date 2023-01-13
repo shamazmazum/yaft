@@ -31,7 +31,7 @@
          of-type (complex double-float)))
     result))
 
-(sera:-> phase-splice
+(sera:-> phase-split
          ((complex-array double-float)
           alex:positive-fixnum)
          (values list &optional))
@@ -60,35 +60,32 @@ either +FORWARD+ or +INVERSE+. A forward DFT is unnormalized and an inverse is
 multiplied by (LENGTH ARRAY)."
   (declare (type (complex-array double-float) array)
            (type (complex double-float) direction))
-  (let ((factors (factor (length array))))
-    (labels ((fft% (array factors)
-               (declare (type (complex-array double-float) array))
-               (let ((length (length array))
-                     (phases (car factors)))
-                 (declare (type alex:positive-fixnum length phases))
-                 (cond
-                   ((< length 10)
-                    (small-fft array direction))
-                   ((> phases 17)
-                    (prime-fft array direction))
-                   (t
-                    (let ((sub-ffts (mapcar (lambda (phase)
-                                              (fft% phase (cdr factors)))
-                                            (phase-split array phases)))
-                          (result (make-array length :element-type '(complex double-float))))
-                      (aops:each-index! result k
-                        (loop
-                           for l fixnum from 0 by 1
-                           for sub-fft in sub-ffts sum
-                             (* (aref (the (complex-array double-float) sub-fft)
-                                      (rem k (/ length phases)))
-                                (if (zerop l)
-                                    ;; This multiplication is not optimized out
-                                    ;; but still it's faster than computing the
-                                    ;; exponent.
-                                    #c(1d0 0d0)
-                                    (exp (* direction k l (/ (* 2 pi)
-                                                             length)))))
-                           of-type (complex double-float)))
-                      result))))))
-      (fft% array factors))))
+  (labels ((fft% (array factors)
+             (declare (type (complex-array double-float) array))
+             (let ((length (length array))
+                   (phases (car factors)))
+               (declare (type alex:positive-fixnum length phases))
+               (cond
+                 ((< length 10)
+                  (small-fft array direction))
+                 ((> phases 17)
+                  (prime-fft array direction))
+                 (t
+                  (let ((sub-ffts (mapcar (lambda (phase)
+                                            (fft% phase (cdr factors)))
+                                          (phase-split array phases)))
+                        (result (make-array length :element-type '(complex double-float))))
+                    (aops:each-index! result k
+                      (loop for l fixnum from 0 by 1
+                            for sub-fft of-type (complex-array double-float) in sub-ffts sum
+                            (* (aref sub-fft (rem k (/ length phases)))
+                               (if (zerop l)
+                                   ;; This multiplication is not optimized out
+                                   ;; but still it's faster than computing the
+                                   ;; exponent.
+                                   #c(1d0 0d0)
+                                   (exp (* direction k l (/ (* 2 pi)
+                                                            length)))))
+                            of-type (complex double-float)))
+                    result))))))
+    (fft% array (factor (length array)))))
