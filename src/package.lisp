@@ -7,4 +7,5 @@
            #:irfft
            #:yaft-error
            #:+forward+
-           #:+inverse+))
+           #:+inverse+
+           #:*small-fft*))

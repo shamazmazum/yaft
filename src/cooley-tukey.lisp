@@ -3,13 +3,18 @@
 (declaim
  (type (complex double-float)
        +forward+
-       +inverse+))
+       +inverse+)
+ (type alex:positive-fixnum *small-fft*))
 
 (defconstant +forward+ #c(0d0 -1d0)
   "Used in FFT for forward transform.")
 
 (defconstant +inverse+ #c(0d0 1d0)
   "Used in FFT for inverse transform.")
+
+(defparameter *small-fft* 17
+  "If length of input vector is less that *SMALL-FFT* a naïve O(n^2)
+algorithm is applied.")
 
 (declaim (optimize (speed 3)))
 
@@ -60,19 +65,19 @@ either +FORWARD+ or +INVERSE+. A forward DFT is unnormalized and an inverse is
 multiplied by (LENGTH ARRAY)."
   (declare (type (complex-array double-float) array)
            (type (complex double-float) direction))
-  (labels ((fft% (array factors)
+  (labels ((%fft (array factors)
              (declare (type (complex-array double-float) array))
              (let ((length (length array))
                    (phases (car factors)))
                (declare (type alex:positive-fixnum length phases))
                (cond
-                 ((< length 10)
+                 ((<= length *small-fft*)
                   (small-fft array direction))
-                 ((> phases 17)
+                 ((> phases *small-fft*)
                   (prime-fft array direction))
                  (t
                   (let ((sub-ffts (mapcar (lambda (phase)
-                                            (fft% phase (cdr factors)))
+                                            (%fft phase (cdr factors)))
                                           (phase-split array phases)))
                         (result (make-array length :element-type '(complex double-float))))
                     (aops:each-index! result k
@@ -88,4 +93,4 @@ multiplied by (LENGTH ARRAY)."
                                                             length)))))
                             of-type (complex double-float)))
                     result))))))
-    (fft% array (factor (length array)))))
+    (%fft array (factor (length array)))))
