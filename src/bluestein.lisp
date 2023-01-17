@@ -28,12 +28,12 @@
        for x = (conjugate (aref helper-sequence i)) do
          (setf (aref s2 (rem (- padded-length i) padded-length)) x))
 
-    (let* ((s1-fft (fft s1 +forward+))
-           (s2-fft (fft s2 +forward+))
-           (convolution (fft (aops:vectorize* '(complex double-float)
-                                 (s1-fft s2-fft)
-                               (/ (* s1-fft s2-fft) padded-length))
-                             +inverse+)))
+    (let ((convolution (fft (map '(vector (complex double-float))
+                                 (lambda (s1 s2)
+                                   (/ (* s1 s2) padded-length))
+                                 (fft s1 +forward+)
+                                 (fft s2 +forward+))
+                            +inverse+)))
       (map '(vector (complex double-float)) #'*
            convolution helper-sequence))))
 
