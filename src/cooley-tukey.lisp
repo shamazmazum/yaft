@@ -23,9 +23,7 @@ algorithm is applied.")
 (defun small-fft (array direction)
   "Calculate FFT using naïve O(n^2) algorithm. Direction can be
 +FORWARD+ or +INVERSE+."
-  (declare (type (complex-array double-float) array)
-           (type (complex double-float) direction)
-           (optimize (speed 3)))
+  (declare (optimize (speed 3)))
   (let* ((length (length array))
          (result (make-array length :element-type '(complex double-float))))
     (aops:each-index! result k
@@ -36,13 +34,10 @@ algorithm is applied.")
     result))
 
 (sera:-> phase-split
-         ((complex-array double-float)
-          alex:positive-fixnum)
+         ((complex-array double-float) alex:positive-fixnum)
          (values list &optional))
 (defun phase-split (array n)
-  (declare (type (complex-array double-float) array)
-           (type alex:positive-fixnum n)
-           (optimize (speed 3)))
+  (declare (optimize (speed 3)))
   (let ((new-length (/ (length array) n)))
     (assert (integerp new-length))
     (let ((result (loop repeat n collect

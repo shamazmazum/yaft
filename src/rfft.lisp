@@ -1,7 +1,5 @@
 (in-package :yaft)
 
-(declaim (optimize (speed 3)))
-
 (sera:-> rfft
          ((real-array double-float))
          (values (complex-array double-float) &optional))
@@ -9,9 +7,7 @@
   "Compute FFT of real-values input array of type (SIMPLE-ARRAY
 DOUBLE-FLOAT (*)). Currently only arrays of even length are
 supported."
-  (declare (type (real-array double-float) array)
-           (optimize (speed 3)))
-
+  (declare (optimize (speed 3)))
   (when (oddp (length array))
     (error 'yaft-error
            :format-control "Only even input length is supported: ~d"
@@ -42,9 +38,7 @@ supported."
 (defun irfft (array length)
   "Compute an inverse of RFFT function multiplied by LENGTH. LENGTH is
 a length of the original array."
-  (declare (type (complex-array double-float) array)
-           (type alex:positive-fixnum length))
-
+  (declare (optimize (speed 3)))
   (when (oddp length)
     (error 'yaft-error
            :format-control "Only even input length is supported: ~d"

@@ -1,12 +1,10 @@
 (in-package :yaft)
 
-(declaim (optimize (speed 3)))
-
 (sera:-> bluestein-fft
          ((complex-array double-float))
          (values (complex-array double-float) &optional))
 (defun bluestein-fft (array)
-  (declare (type (complex-array double-float) array))
+  (declare (optimize (speed 3)))
   (let* ((length (length array))
          (padded-length (ash 1 (integer-length (1- (* length 2)))))
          (helper-sequence (make-array length :element-type '(complex double-float)))
@@ -41,7 +39,7 @@
          ((complex-array double-float))
          (values (complex-array double-float) &optional))
 (defun bluestein-ifft (array)
-  (declare (type (complex-array double-float) array))
+  (declare (optimize (speed 3)))
   ;; Generic IFFT formula
   (let ((fft (bluestein-fft
               (map '(vector (complex double-float))
@@ -54,8 +52,7 @@
           (complex double-float))
          (values (complex-array double-float) &optional))
 (defun prime-fft (array direction)
-  (declare (type (complex-array double-float) array)
-           (type (complex double-float) direction))
+  (declare (optimize (speed 3)))
   (cond
     ((= direction +forward+)
      (bluestein-fft  array))
