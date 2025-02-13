@@ -10,7 +10,7 @@
     (labels ((%go (d)
                (declare (type fixnum d))
                (cond
-                 ((= d limit) n)
+                 ((> d limit) n)
                  ((zerop (rem n d)) d)
                  (t (%go (1+ d))))))
       (%go 2))))
