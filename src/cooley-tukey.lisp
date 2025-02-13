@@ -81,20 +81,16 @@ algorithm is applied.")
 (defun two-phase-fft (even odd direction)
   (let* ((phase-length (length odd))
          (length (* phase-length 2))
-         (result (make-array length :element-type '(complex double-float)))
-         (%odd (make-array phase-length :element-type '(complex double-float))))
-    (loop for k fixnum below phase-length do
-          (setf (aref %odd k)
-                (* (aref odd k)
-                   (exp (* direction k (/ (* 2 pi) length))))))
-    (loop for l below phase-length do
+         (result (make-array length :element-type '(complex double-float))))
+    (loop for l below phase-length
+          for e = (aref even l)
+          for o = (* (aref odd l)
+                     (exp (* direction l (/ (* 2 pi) length))))
+          do
           (setf (aref result l)
-                (+ (aref even l)
-                   (aref %odd l))))
-    (loop for l below phase-length do
-          (setf (aref result (+ phase-length l))
-                (- (aref even l)
-                   (aref %odd l))))
+                (+ e o)
+                (aref result (+ phase-length l))
+                (- e o)))
     result))
 
 (sera:-> cooley-tukey-fft
