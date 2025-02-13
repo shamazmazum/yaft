@@ -5,12 +5,13 @@
     :description "Yet another FFT library"
     :license "2-clause BSD"
     :serial t
-    :pathname "src/"
+    :pathname "src"
     :components ((:file "package")
-                 (:file "types")
-                 (:file "factor")
+                 (:file "early-defs")
+                 (:file "divisor")
                  (:file "cooley-tukey")
                  (:file "bluestein")
+                 (:file "fft")
                  (:file "rfft"))
     :depends-on (:alexandria
                  :serapeum
@@ -25,7 +26,7 @@
     :version "0.1"
     :author "Vasily Postnicov <shamaz.mazum@gmail.com>"
     :license "2-clause BSD"
-    :pathname "tests/"
+    :pathname "tests"
     :serial t
     :components ((:file "package")
                  (:file "tests"))
