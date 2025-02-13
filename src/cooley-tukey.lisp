@@ -66,14 +66,9 @@ algorithm is applied.")
     (aops:each-index! result k
       (loop for l fixnum from 0 by 1
             for sub-fft of-type (complex-array double-float) in sub-ffts sum
-            (* (aref sub-fft (rem k (length sub-fft)))
-               (if (zerop l)
-                   ;; This multiplication is not optimized out
-                   ;; but still it's faster than computing the
-                   ;; exponent.
-                   #c(1d0 0d0)
-                   (exp (* direction k l (/ (* 2 pi)
-                                            length)))))
+            (let ((x (aref sub-fft (rem k (length sub-fft)))))
+              (if (zerop l) x
+                  (* (exp (* direction k l (/ (* 2 pi) length))) x)))
             of-type (complex double-float)))
     result))
 
