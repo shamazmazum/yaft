@@ -72,3 +72,34 @@
      for array2 = (yaft:fft (yaft:fft array yaft:+forward+) yaft:+inverse+)
      do (is-true (every (sera:hook2 #'approx-= (alex:rcurry #'/ (length array)))
                         array array2))))
+
+;; Test evaluation with different array lengths
+(test evaluates-ok-fft
+  (loop for n below 3000
+        for a = (make-array (+ n 2)
+                            :element-type '(complex double-float)
+                            :initial-contents
+                            (loop repeat (+ n 2) collect
+                                  (complex (random 1d0)
+                                           (random 1d0))))
+        for forward  = (yaft:fft a       yaft:+forward+)
+        for backward = (yaft:fft forward yaft:+inverse+) do
+        (is-true (every (lambda (x) (< x 1d-8))
+                        (map '(vector double-float)
+                             (lambda (x y)
+                               (abs (- x (/ y (+ n 2)))))
+                             a backward)))))
+
+(test evaluates-ok-rfft
+  (loop for n from 4 to 3000 by 2
+        for a = (make-array n
+                            :element-type 'double-float
+                            :initial-contents
+                            (loop repeat n collect (random 1d0)))
+        for forward  = (yaft:rfft a)
+        for backward = (yaft:irfft forward n) do
+        (is-true (every (lambda (x) (< x 1d-8))
+                        (map '(vector double-float)
+                             (lambda (x y)
+                               (abs (- x (/ y n))))
+                             a backward)))))
