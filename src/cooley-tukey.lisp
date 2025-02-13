@@ -16,8 +16,6 @@
   "If length of input vector is less that *SMALL-FFT* a naïve O(n^2)
 algorithm is applied.")
 
-(declaim (optimize (speed 3)))
-
 (sera:-> small-fft
          ((complex-array double-float)
           (complex double-float))
@@ -26,7 +24,8 @@ algorithm is applied.")
   "Calculate FFT using naïve O(n^2) algorithm. Direction can be
 +FORWARD+ or +INVERSE+."
   (declare (type (complex-array double-float) array)
-           (type (complex double-float) direction))
+           (type (complex double-float) direction)
+           (optimize (speed 3)))
   (let* ((length (length array))
          (result (make-array length :element-type '(complex double-float))))
     (aops:each-index! result k
@@ -42,7 +41,8 @@ algorithm is applied.")
          (values list &optional))
 (defun phase-split (array n)
   (declare (type (complex-array double-float) array)
-           (type alex:positive-fixnum n))
+           (type alex:positive-fixnum n)
+           (optimize (speed 3)))
   (let ((new-length (/ (length array) n)))
     (assert (integerp new-length))
     (let ((result (loop repeat n collect
@@ -108,6 +108,7 @@ algorithm is applied.")
           (integer 2 #.most-positive-fixnum))
          (values (complex-array double-float) &optional))
 (defun cooley-tukey-fft (array direction phases)
+  (declare (optimize (speed 3)))
   (let ((length (length array)))
     (if (<= length *small-fft*)
         (small-fft array direction)
