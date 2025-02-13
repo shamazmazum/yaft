@@ -12,7 +12,7 @@
 (defconstant +inverse+ #c(0d0 1d0)
   "Used in FFT for inverse transform.")
 
-(defparameter *small-fft* 17
+(defparameter *small-fft* 2
   "If length of input vector is less that *SMALL-FFT* a naïve O(n^2)
 algorithm is applied.")
 
