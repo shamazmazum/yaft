@@ -20,15 +20,20 @@ supported."
       (complex (aref array (+ 0 (* 2 k)))
                (aref array (+ 1 (* 2 k)))))
     (let ((fft (fft complex-input +forward+)))
-      (aops:each-index! result k
-        (let ((mul (* #c(0d0 1d0)
-                      (if (< k half) 1 -1)
-                      (exp (* #c(0d0 -1d0)
-                              (rem k half)
-                              (/ pi half))))))
-          (/ (+ (* (- 1 mul) (aref fft (rem k half)))
-                (* (+ 1 mul) (conjugate (aref fft (rem (- half k) half)))))
-             2))))
+      (flet ((fft-value (idx1 idx2 m)
+               (/ (+ (* (- 1 m) (aref fft idx1))
+                     (* (+ 1 m) (conjugate (aref fft idx2))))
+                  2)))
+        (setf (aref result 0)
+              (fft-value 0 0 #c(0d0 1d0)))
+        (loop for k fixnum from 1 below half do
+              (setf (aref result k)
+                    (fft-value k (- half k)
+                               (* #c(0d0 1d0)
+                                  (exp (* #c(0d0 -1d0) k
+                                          (/ pi half)))))))
+        (setf (aref result half)
+              (fft-value 0 0 #c(0d0 -1d0)))))
     result))
 
 (sera:-> irfft
