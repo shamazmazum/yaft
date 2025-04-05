@@ -33,14 +33,15 @@
        for x = (conjugate (aref helper-sequence i)) do
          (setf (aref s2 (rem (- padded-length i) padded-length)) x))
 
-    (let ((convolution (fft (map '(vector (complex double-float))
-                                 (lambda (s1 s2)
-                                   (/ (* s1 s2) padded-length))
-                                 (fft s1 +forward+)
-                                 (fft s2 +forward+))
-                            +inverse+)))
-      (map '(vector (complex double-float)) #'*
-           convolution helper-sequence))))
+    (let ((convolution (cooley-tukey-fft!
+                        (map-into 
+                         s1 (lambda (s1 s2)
+                              (/ (* s1 s2) padded-length))
+                         (cooley-tukey-fft! s1 +forward+)
+                         (cooley-tukey-fft! s2 +forward+))
+                        +inverse+)))
+      (map-into helper-sequence #'*
+                convolution helper-sequence))))
 
 (sera:-> bluestein-ifft
          ((complex-array double-float))

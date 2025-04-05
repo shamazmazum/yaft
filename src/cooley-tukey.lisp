@@ -110,3 +110,12 @@ algorithm is applied.")
   (declare (optimize (speed 3)))
   (assert (length-power-of-2-p array))
   (%fft! (reorder-input array) direction))
+
+(sera:-> cooley-tukey-fft!
+         ((complex-array double-float)
+          (complex double-float))
+         (values (complex-array double-float) &optional))
+(defun cooley-tukey-fft! (array direction)
+  (declare (optimize (speed 3)))
+  (assert (length-power-of-2-p array))
+  (%fft! (reorder-input! array array) direction))

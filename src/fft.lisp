@@ -1,6 +1,5 @@
 (in-package :yaft)
 
-;; This declaration is the same is in early-defs
 (sera:-> fft
          ((complex-array double-float)
           (complex double-float))

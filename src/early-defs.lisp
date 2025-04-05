@@ -11,9 +11,3 @@
 (define-condition yaft-error (simple-error)
   ()
   (:documentation "General yaft error"))
-
-;; This is needed here because it's called before it's defined.
-(sera:-> fft
-         ((complex-array double-float)
-          (complex double-float))
-         (values (complex-array double-float) &optional))
