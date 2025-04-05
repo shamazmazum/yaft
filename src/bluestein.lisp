@@ -1,12 +1,19 @@
 (in-package :yaft)
 
+(sera:-> closest-power-of-2 (alex:positive-fixnum)
+         (values alex:positive-fixnum &optional))
+(declaim (inline closest-power-of-2))
+(defun closest-power-of-2 (n)
+  (let ((length (integer-length (1- n))))
+    (ash 1 length)))
+
 (sera:-> bluestein-fft
          ((complex-array double-float))
          (values (complex-array double-float) &optional))
 (defun bluestein-fft (array)
   (declare (optimize (speed 3)))
   (let* ((length (length array))
-         (padded-length (ash 1 (integer-length (1- (* length 2)))))
+         (padded-length (closest-power-of-2 (1- (* length 2))))
          (helper-sequence (make-array length :element-type '(complex double-float)))
          (s1 (make-array padded-length
                          :element-type '(complex double-float)
@@ -20,7 +27,7 @@
 
     (map-into s1 #'* array helper-sequence)
     (map-into s2 #'conjugate helper-sequence)
-    ;; And an ugly imperative-style addition ;)
+    ;; And an ugly imperative-style addendum ;)
     (loop
        for i below length
        for x = (conjugate (aref helper-sequence i)) do
