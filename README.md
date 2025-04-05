@@ -14,7 +14,7 @@ implementations. Here is a comparison with some other popular libraries:
 | Real FFT                   |    ✓¹         |     ✓     |     ✓        |
 | Not power-of-2 FFT         |    ✓          |     ✓     |     ✗        |
 | No side-effects²           |    ✓          |     ✗     |     ✗        |
-| Fast                       |  Not really³  |     ✓     |     ✓        |
+| Fast                       |    ✓          |     ✗     |     ✓        |
 | Prime number of elements   |    ✓          |     ✗     |     ✗        |
 | Multidimensional arrays    |    ✗          |     ✗     |     ✗        |
 
@@ -25,76 +25,23 @@ Some additional explanation:
    buffers. This can make these libraries unsuitable for multithreaded
    environment. This library works without any side-effects with exception of
    consing and signalling conditions.
-3. Let's compare execution times of yaft and fftpack5:
 
+Benchmarks can be run by loading `yaft/benchmark` system and running
+`(yaft/benchmark:benchmark)`. A small excerpt:
 
-``` lisp
-CL-USER> (time
- (loop with array = (make-array 40000
-                                :element-type 'double-float
-                                :initial-contents
-                                (loop repeat 40000 collect (random 1d0)))
-       repeat 100 do (yaft:rfft array)))
-Evaluation took:
-  1.757 seconds of real time
-  1.756551 seconds of total run time (1.756551 user, 0.000000 system)
-  [ Run times consist of 0.009 seconds GC time, and 1.748 seconds non-GC time. ]
-  100.00% CPU
-  6,676,822,452 processor cycles
-  3,657,752,016 bytes consed
-  
-NIL
-CL-USER> (time
- (loop with array = (make-array 40000
-                                :element-type 'single-float
-                                :initial-contents
-                                (loop repeat 40000 collect (random 1f0)))
-       repeat 100 do (fftpack5:rfft array)))
-Evaluation took:
-  0.617 seconds of real time
-  0.617910 seconds of total run time (0.617910 user, 0.000000 system)
-  100.16% CPU
-  2,347,576,464 processor cycles
-  32,946,352 bytes consed
+~~~~
+Complex FFT
+Sequence length = 90100
+-                SAMPLES  TOTAL       MINIMUM   MAXIMUM   MEDIAN    AVERAGE     DEVIATION
+REAL-TIME        100      3.552284    0.033916  0.040123  0.035425  0.035523    0.00111
+RUN-TIME         100      3.552644    0.033916  0.040124  0.035424  0.035526    0.001115
 
-NIL
-```
-
-As you can see can see, fftpack5 is about 3 times faster than yaft. But if a
-number of elements in the array has large prime factors, yaft is much faster:
-
-``` lisp
-CL-USER> (time
- (loop with array = (make-array 19997
-                                :element-type '(complex double-float)
-                                :initial-contents (loop repeat 19997 collect
-                                                        (complex (random 1d0)
-                                                                 (random 1d0))))
-       repeat 20 do (yaft:fft array yaft:+forward+)))
-Evaluation took:
-  3.443 seconds of real time
-  3.442248 seconds of total run time (3.434396 user, 0.007852 system)
-  [ Run times consist of 0.017 seconds GC time, and 3.426 seconds non-GC time. ]
-  99.97% CPU
-  13,086,727,204 processor cycles
-  7,183,863,024 bytes consed
-  
-NIL
-CL-USER> (time
- (loop with array = (make-array 19997
-                                :element-type 'single-float
-                                :initial-contents
-                                (loop repeat 19997 collect (random 1f0)))
-       repeat 20 do (fftpack5:rfft array)))
-Evaluation took:
-  20.123 seconds of real time
-  20.122875 seconds of total run time (20.122875 user, 0.000000 system)
-  100.00% CPU
-  76,466,978,086 processor cycles
-  3,548,224 bytes consed
-  
-NIL
-```
+Real FFT
+Sequence length = 95100
+-                SAMPLES  TOTAL      MINIMUM   MAXIMUM   MEDIAN    AVERAGE    DEVIATION
+REAL-TIME        100      1.662827   0.016386  0.018972  0.016525  0.016628   0.000388
+RUN-TIME         100      1.663096   0.016385  0.018973  0.016525  0.016631   0.000389
+~~~~
 
 ## What does yaft return?
 
