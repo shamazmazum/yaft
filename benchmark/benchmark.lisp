@@ -9,4 +9,14 @@
         do
         (format t "Sequence length = ~d~%" l)
         (tb:with-timing (100)
-          (yaft:fft array yaft:+forward+))))
+          (yaft:fft array yaft:+forward+)))
+
+  (format t "Real FFT~%")
+  (loop for l from 100 to 100000 by 5000
+        for array = (make-array l
+                                :element-type 'double-float
+                                :initial-element 0d0)
+        do
+        (format t "Sequence length = ~d~%" l)
+        (tb:with-timing (100)
+          (yaft:rfft array))))
