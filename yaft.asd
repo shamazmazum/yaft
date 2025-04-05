@@ -8,7 +8,6 @@
     :pathname "src"
     :components ((:file "package")
                  (:file "early-defs")
-                 (:file "divisor")
                  (:file "cooley-tukey")
                  (:file "bluestein")
                  (:file "fft")

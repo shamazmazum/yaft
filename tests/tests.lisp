@@ -10,6 +10,23 @@
 (defun approx-= (x y)
   (< (abs (- x y)) 1d-6))
 
+(sera:-> small-fft
+         ((yaft::complex-array double-float)
+          (complex double-float))
+         (values (yaft::complex-array double-float) &optional))
+(defun small-fft (array direction)
+  "Calculate FFT using naïve O(n^2) algorithm. Direction can be
++FORWARD+ or +INVERSE+."
+  (declare (optimize (speed 3)))
+  (let* ((length (length array))
+         (result (make-array length :element-type '(complex double-float))))
+    (aops:each-index! result k
+      (loop for l fixnum below length sum
+           (* (aref array l)
+              (exp (* direction (/ (* 2 pi) length) k l)))
+         of-type (complex double-float)))
+    result))
+
 (in-suite yaft)
 
 (test fft-vs-naïve
@@ -20,7 +37,7 @@
                                                         (complex (random 1d0)
                                                                  (random 1d0))))
         for fft = (yaft:fft array yaft:+forward+)
-        for dft = (yaft::small-fft array yaft:+forward+)
+        for dft = (small-fft array yaft:+forward+)
         do (is-true (every #'approx-= fft dft))))
 
 (test fft-inverse
@@ -60,7 +77,7 @@
                                 :element-type '(complex double-float)
                                 :initial-contents (loop repeat 97 collect (complex (random 1d0))))
         for fft = (yaft:fft array yaft:+forward+)
-        for dft = (yaft::small-fft array yaft:+forward+)
+        for dft = (small-fft array yaft:+forward+)
         do (is-true (every #'approx-= fft dft))))
 
 
