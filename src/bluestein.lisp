@@ -7,10 +7,11 @@
   (let ((length (integer-length (1- n))))
     (ash 1 length)))
 
-(sera:-> bluestein-fft
-         ((complex-array double-float))
+(sera:-> bluestein
+         ((complex-array double-float)
+          (complex double-float))
          (values (complex-array double-float) &optional))
-(defun bluestein-fft (array)
+(defun bluestein (array direction)
   (declare (optimize (speed 3)))
   (let* ((length (length array))
          (padded-length (closest-power-of-2 (1- (* length 2))))
@@ -23,7 +24,7 @@
                          :initial-element #c(0d0 0d0))))
 
     (aops:each-index! helper-sequence k
-      (exp (- (/ (* pi #c(0d0 1d0) (expt k 2)) length))))
+      (exp (/ (* pi direction (expt k 2)) length)))
 
     (map-into s1 #'* array helper-sequence)
     (map-into s2 #'conjugate helper-sequence)
@@ -42,31 +43,3 @@
                         +inverse+)))
       (map-into helper-sequence #'*
                 convolution helper-sequence))))
-
-;; TODO: Rewrite
-(sera:-> bluestein-ifft
-         ((complex-array double-float))
-         (values (complex-array double-float) &optional))
-(defun bluestein-ifft (array)
-  (declare (optimize (speed 3)))
-  ;; Generic IFFT formula
-  (let ((fft (bluestein-fft
-              (map '(vector (complex double-float))
-                   #'conjugate array))))
-    (map '(vector (complex double-float))
-         #'conjugate fft)))
-
-(sera:-> bluestein
-         ((complex-array double-float)
-          (complex double-float))
-         (values (complex-array double-float) &optional))
-(defun bluestein (array direction)
-  (declare (optimize (speed 3)))
-  (cond
-    ((= direction +forward+)
-     (bluestein-fft  array))
-    ((= direction +inverse+)
-     (bluestein-ifft array))
-    (t (error 'yaft-error
-              :format-control "Invalid direction: ~f"
-              :format-arguments (list direction)))))
