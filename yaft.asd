@@ -1,6 +1,6 @@
 (defsystem :yaft
     :name :yaft
-    :version "0.1"
+    :version "0.2"
     :author "Vasily Postnicov <shamaz.mazum@gmail.com>"
     :description "Yet another FFT library"
     :license "2-clause BSD"
@@ -22,7 +22,7 @@
 
 (defsystem :yaft/tests
     :name :yaft/tests
-    :version "0.1"
+    :version "0.2"
     :author "Vasily Postnicov <shamaz.mazum@gmail.com>"
     :license "2-clause BSD"
     :pathname "tests"
@@ -33,7 +33,7 @@
 
 (defsystem :yaft/benchmark
     :name :yaft/benchmark
-    :version "0.1"
+    :version "0.2"
     :author "Vasily Postnicov <shamaz.mazum@gmail.com>"
     :license "2-clause BSD"
     :pathname "benchmark"
