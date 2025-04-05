@@ -31,9 +31,9 @@
 
 (test fft-vs-naïve
   (loop repeat 10
-        for array = (make-array 380
+        for array = (make-array 4000
                                 :element-type '(complex double-float)
-                                :initial-contents (loop repeat 380 collect
+                                :initial-contents (loop repeat 4000 collect
                                                         (complex (random 1d0)
                                                                  (random 1d0))))
         for fft = (yaft:fft array yaft:+forward+)
@@ -42,9 +42,9 @@
 
 (test fft-inverse
   (loop repeat 10
-        for array = (make-array 200
+        for array = (make-array 5000
                                 :element-type '(complex double-float)
-                                :initial-contents (loop repeat 200 collect
+                                :initial-contents (loop repeat 5000 collect
                                                         (complex (random 1d0)
                                                                  (random 1d0))))
         for array2 = (yaft:fft (yaft:fft array yaft:+forward+) yaft:+inverse+)
