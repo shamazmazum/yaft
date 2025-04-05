@@ -112,10 +112,10 @@ algorithm is applied.")
 
 ;; New inplace algo
 
-(declaim (inline check-length))
-(defun check-length (array)
+(declaim (inline length-power-of-2-p))
+(defun length-power-of-2-p (array)
   (let ((length (length array)))
-    (assert (zerop (logand length (1- length))))))
+    (zerop (logand length (1- length)))))
 
 ;; Requirement: Array length is a power of 2
 (sera:-> reverse-bits (alex:positive-fixnum alex:non-negative-fixnum)
@@ -197,11 +197,11 @@ algorithm is applied.")
                             %m (* %m m)))))
     array))
 
-(sera:-> cooley-tukey
+(sera:-> cooley-tukey-fft/inplace
          ((complex-array double-float)
           (complex double-float))
          (values (complex-array double-float) &optional))
-(defun cooley-tukey (array direction)
+(defun cooley-tukey-fft/inplace (array direction)
   (declare (optimize (speed 3)))
-  (check-length array)
+  (assert (length-power-of-2-p array))
   (%fft! (reorder-input array) direction))

@@ -10,8 +10,6 @@
 either +FORWARD+ or +INVERSE+. A forward DFT is unnormalized and an inverse is
 multiplied by (LENGTH ARRAY)."
   (declare (optimize (speed 3)))
-  (let* ((length (length array))
-         (phases (divisor length)))
-    (if (> phases *small-fft*)
-        (prime-fft array direction)
-        (cooley-tukey-fft array direction phases))))
+  (if (length-power-of-2-p array)
+      (cooley-tukey-fft/inplace array direction)
+      (prime-fft array direction)))
