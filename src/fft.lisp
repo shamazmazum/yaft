@@ -12,4 +12,4 @@ multiplied by (LENGTH ARRAY)."
   (declare (optimize (speed 3)))
   (if (length-power-of-2-p array)
       (cooley-tukey-fft/inplace array direction)
-      (prime-fft array direction)))
+      (bluestein array direction)))

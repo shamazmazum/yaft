@@ -54,11 +54,11 @@
     (map '(vector (complex double-float))
          #'conjugate fft)))
 
-(sera:-> prime-fft
+(sera:-> bluestein
          ((complex-array double-float)
           (complex double-float))
          (values (complex-array double-float) &optional))
-(defun prime-fft (array direction)
+(defun bluestein (array direction)
   (declare (optimize (speed 3)))
   (cond
     ((= direction +forward+)
