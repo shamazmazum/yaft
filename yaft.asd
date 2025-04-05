@@ -31,3 +31,14 @@
     :components ((:file "package")
                  (:file "tests"))
     :depends-on (:yaft :fiveam))
+
+(defsystem :yaft/benchmark
+    :name :yaft/benchmark
+    :version "0.1"
+    :author "Vasily Postnicov <shamaz.mazum@gmail.com>"
+    :license "2-clause BSD"
+    :pathname "benchmark"
+    :serial t
+    :components ((:file "package")
+                 (:file "benchmark"))
+    :depends-on (:yaft :trivial-benchmark))
