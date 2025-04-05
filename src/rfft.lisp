@@ -26,12 +26,13 @@ supported."
                   2)))
         (setf (aref result 0)
               (fft-value 0 0 #c(0d0 1d0)))
-        (loop for k fixnum from 1 below half do
+        (loop with ω = (exp (* #c(0d0 -1d0) (/ pi half)))
+              with m of-type (complex double-float) = ω
+              for k fixnum from 1 below half do
               (setf (aref result k)
                     (fft-value k (- half k)
-                               (* #c(0d0 1d0)
-                                  (exp (* #c(0d0 -1d0) k
-                                          (/ pi half)))))))
+                               (* #c(0d0 1d0) m))
+                    m (* m ω)))
         (setf (aref result half)
               (fft-value 0 0 #c(0d0 -1d0)))))
     result))
@@ -56,12 +57,16 @@ a length of the original array."
 
   (let* ((half (1- (length array)))
          (ifft-input (make-array half :element-type '(complex double-float))))
-    (aops:each-index! ifft-input k
-      (let ((mul (* #c(0d0 -1d0) (exp (* #c(0d0 1d0) k (/ pi half))))))
-        (+ (* (aref array k)
-              (- 1 mul))
-           (* (conjugate (aref array (- half k)))
-              (+ 1 mul)))))
+    (loop with ω = (exp (* #c(0d0 1d0) (/ pi half)))
+          with m of-type (complex double-float) = #c(1d0 0d0)
+          for k fixnum below half
+          for mul = (* #c(0d0 -1d0) m) do
+          (setf (aref ifft-input k)
+                (+ (* (aref array k)
+                      (- 1 mul))
+                   (* (conjugate (aref array (- half k)))
+                      (+ 1 mul)))
+                m (* m ω)))
     (let ((fft (fft ifft-input +inverse+))
           (result (make-array length :element-type 'double-float)))
       (loop for i fixnum below half do
