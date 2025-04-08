@@ -1,20 +1,14 @@
 (in-package :yaft)
 
-(declaim
- (type (complex double-float)
-       +forward+
-       +inverse+)
- (type alex:positive-fixnum *small-fft*))
+(declaim (type (complex double-float)
+               +forward+
+               +inverse+))
 
 (defconstant +forward+ #c(0d0 -1d0)
   "Used in FFT for forward transform.")
 
 (defconstant +inverse+ #c(0d0 1d0)
   "Used in FFT for inverse transform.")
-
-(defparameter *small-fft* 2
-  "If length of input vector is less that *SMALL-FFT* a naïve O(n^2)
-algorithm is applied.")
 
 (declaim (inline length-power-of-2-p))
 (defun length-power-of-2-p (array)
